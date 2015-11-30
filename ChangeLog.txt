@@ -1,0 +1,185 @@
+TM::MyCSV Change Log
+
+2009-09-02
+    * sort() accepts SORT_TIME to order a table by a column that contains
+      textual date and/or time values like "January 1 2009". Use SORT_NUMERIC if
+      you use Unix timestamps and SORT_DEFAULT or SORT_STRING if you use ISO
+      dates like I do in this change log.
+    * Two example scripts added.
+
+2009-09-01
+    * sort() accepts SORT_LOCALE_STRING. Don't forget to use setlocale() before.
+    * SORT_NULL fixed. The number 0 and the string "0" should not be handled as
+      NULL values. Instead of a boolean comparison we use strlen() now.
+    * SORT_STRING fixed. Values like "2a" and the number 2 have been compared as
+      numbers. This is an intended PHP behaviour, but should happen with
+      SORT_REGULAR only.
+    * add_field() accepts field names with Umlauts and other characters from
+      0x7F to 0xFF.
+    * example_products.php added.
+
+2008-06-19
+    * row_exists() destroyed the data array in PHP 5. The reason is unknown (a
+      bug in PHP?).
+
+2005-11-21
+    * add_field() fixed (failed with $afterField = "unknown column").
+    * Some tiny code beatyfications and speed-ups.
+
+2005-08-07
+    * There is a new bug in fgetcsv(). All double quotes are stripped from the
+      beginning and/or end of the values. I added another workaround to solve
+      this behaviour (improved the "smart" backslashes).
+    * Fixed a tiny bug in insert(). Auto incrementation of ID "x" returned "y"
+      but should return a numeric key.
+    * test.php: Added more test cases.
+
+2005-06-30
+    * Added third argument to limit(), e.g. limit(3, 9, SEEK_SET) for the old
+      MySQL behaviour.
+
+2005-05-08
+    * Full support for remote files added (read-only of course). Works only with
+      comma separated files by default. Use $t = new MyCSV(); $t->delimiter =
+      ";"; $t->read("http://..."); to read a remote file with another delimiter.
+    * Changed data_seek(), it's an alias for seek(..., SEEK_SET) now.
+
+2005-04-11
+    * Changed and improved seek() and limit() a lot. Both use absolute IDs
+      instead of relative offsets now. WARNING! These changes are incompatible
+      to previous versions of the class! limit() is NOT compatible to MySQL's
+      LIMIT any more! Set $whence to SEEK_SET for the old behaviour.
+
+2005-03-19
+    * insert() and update() return false if $data is not an array.
+
+2004-09-18
+    * Added an other solution for the deadlock problem in read(). Uses the
+      blocking flock() again. Triggers a warning if a file is opened twice.
+    * write() returns false if the filename is empty.
+    * "9a" == 9 returns true! Now the class uses strcmp() instead.
+
+2004-08-24
+    * Auto increment feature in insert() is a lot faster now.
+    * first() and last() rewritten.
+    * write() is little bit faster now (uses str_replace instead of strtr).
+    * close() improved.
+    * PHPDoc comments updated, @requires added.
+
+2004-08-23
+    * write() fixed, ids may contain the delimiter character now.
+    * Auto increment feature in insert() slightly improved.
+
+2004-07-31
+    * first() and last() fixed, return false if the table is empty.
+
+2004-06-08
+    * prev() fixed.
+
+2004-03-08
+    * Tiny speed-ups in export and write() (about 30% faster).
+
+2004-02-15
+    * sort() uses the object method array(&$this, '_cmp') instead of the static
+      class method array('MyCSV', '_cmp') now.
+
+2004-02-08
+    * Introduced read(). You may call "new MyCSV()" and "read(tablename)"
+      instead of "new MyCSV(tablename)" now.
+    * Locked files (Windows) made read() fail (is_writeable() returned true).
+
+2003-12-28
+    * limit() added (for each() and fetch_assoc() only!).
+    * The array in insert(), update(), row_exists() is not expected by ref. any
+      more. insert(array(...)) was impossible due to this.
+
+2003-11-19
+    * $insert_id is private. Use insert_id() instead.
+
+2003-11-10
+    * "Smart" backslashes added. This makes the class compatible to any PHP
+      version, including >=4.3.2 and 5.x. Critical characters \x00 and \ are
+      "smart" escaped now.
+    * Bugfix: close() caused errors if file does not exist.
+
+2003-11-03
+    * Fixed tiny "Notice" bug in export().
+
+2003-10-29
+    * sort() allows to use SORT_NULL in combination with any other flag, e.g.
+      sort("a SORT_NAT SORT_NULL b SORT_NUMERIC SORT_NULL").
+
+2003-10-28
+    * Bugfix: update() didn't handled numeric field names properly.
+    * Speeded up insert() and update() a bit.
+
+2003-10-27
+    * Works in both PHP <=4.3.1 and >=4.3.2 now (fgetcsv() was changed).
+    * Added parameter MyCSV(..., length), defaults to 10k instead 100k now.
+    * Bugfix: drop_field("id") was allowed by mistake, returns false now.
+
+2003-10-26
+    * flock() in MyCSV() doesn't block/kill the web server any more when trying
+      to lock the file twice. Now it triggers an user warning.
+    * Added close() but made it private because in general it's not needed.
+    * Added tablename().
+    * Improved the file reader a lot. ID column may be anywhere in the file or
+      may be completely missing. MyCSV() adds missing IDs immediatelly.
+    * Bugfix: write() improved, IDs may contain double quotes now.
+    * add_field() returns false if field name contains any special character.
+    * Renamed property _tablename into filename.
+
+2003-10-20
+    * Added second parameter to ad_field(..., $afterField).
+    * Added first() and last().
+    * Bugfix: delete(0) didn't work, it killed the whole table.
+    * Bugfix: sort("id ...") works (calls ksort() or krsort() internaly).
+    * Bugfix: sort("... desc") didn't work because it was case sensitive.
+    * A bunch of small fixes.
+
+2003-07-16
+    * Added SORT_NAT (natural sort) to sort().
+    * SORT_NULL handles "0" as empty too.
+
+2003-06-02
+    * Added some possible field delimiters (":", "\0" and space).
+
+2003-05-27
+    * Bugfix: Multiple calls of sort() are working now.
+    * Bugfix: join() resets the internal array pointer now.
+
+2003-05-16
+    * Added: ksort()/krsort(). Similar to sort("id ...")/sort("id DESC ...").
+    * Bugfix: sort() don't mix up the IDs any more (bases on uasort() now).
+    * Added sorting type SORT_NULL to sort(). This always moves empty elements
+      to the end of the table.
+    * Bugfix: Files can be write-protected, then write() triggers a warning.
+    * Bugfix: rand() can return more than one random IDs now, e.g. rand(5).
+
+2003-04-03
+    * Improved data security a lot. File locking keeps the file locked until
+      the script ended. No file sharing problems possible any more.
+    * Added ids(), min(), max() and rand(). They all return one or more ID
+      numbers. Fetch the corresponding data rows using $table->data($id).
+    * Added filesystem functions exists() and is_writeable().
+    * Added some missing methods and aliases, e.g. count(), fetch_assoc(), ...
+    * No need to use add_field() any more, initial insert() will handle this.
+    * Ordered the methods in logical groups: SQL/Array/Filesystem functions.
+
+2003-04-01
+    * Bugfix: update() uses array_merge now. This allows particular updates.
+    * Added: id_exists() checks if an ID exists (see array_key_exists()).
+    * Added: ids() returns all ID numbers (see array_keys()).
+    * Added: rand() returns a random ID number (see array_rand()).
+
+2003-03-16
+    * File rows will be separated by "\r\n" now. Compatibility to Windows.
+    * Added export() which returns the CSV file as a string.
+    * Bugfix: insert_id() works now.
+    * A lot of small changes. Works with E_ALL on. Faster too.
+
+2003-01-20
+    * drop_field() works now.
+
+2002-11-21
+    * Variable delimiter added, ',' and ';' are supported now.

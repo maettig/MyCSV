@@ -1,0 +1,528 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>Class TM::MyCSV</title>
+<meta name="generator" content="TM::PHPDoc">
+<style type="text/css">
+body{background-color:white;}
+a{color:#006600;}
+h1{margin-top:0;}
+h1 small{font-size:45%;}
+h1 small a{color:black;}
+h2{background-color:#CFE8CF;padding:4px;}
+h3{background-color:#F0F7F0;padding:1px;border-top:2px solid #CFE8CF;}
+.intro,.description{max-width:72ex;}
+.description{margin-left:5ex;}
+address{font-size:smaller;margin-top:5ex;}
+address,address a{color:#666666;}
+dd{margin-bottom:0.2em;}
+</style>
+</head>
+<body>
+
+<h1>Class TM::MyCSV <small>by <a href="http://maettig.com/">Thiemo Mättig</a></small><br>
+<small>Version 2009-09-02</small></h1>
+
+<div class="intro">A text file based database complement.<br>
+<br>
+This class handles standard CSV or TXT text files as they where database
+tables. It supports most benefits of both SQL tables and PHP arrays. It
+doesn't need a real database management system nor does it require any
+knowlege of the SQL language. It hides all filesystem functions so you don't
+have to deal with file pointers, field delimiters, escape sequences and so
+on. Because it uses the widespreaded standard CSV file format you are able
+to create, read and update the tables using any spreadsheet software (e.g.
+Excel). It supports user defined table sort similar to ORDER BY, auto
+incremented ID numbers, limitation and joins similar to LIMIT and LEFT OUTER
+JOIN, it's binary safe (uses work arounds for all known fgetcsv() related
+bugs) and lots more.<br>
+<br>
+File format restrictions by design ("it's not a bug, it's a feature"):
+<ul>
+<li>The first line of the CSV file <b>must</b> contain the column names.
+</li>
+<li>The CSV file <b>should</b> contain a column named "id". If this column is
+  missing, it is added automatically. See <a href="#fields">fields()</a>.
+</li>
+<li>Some critical characters (NUL, double quotes, backslashes) are replaced or
+  backslashed to make the resulting CSV file compatible to all PHP versions
+  (all known versions do have one or more bugs in <code>fgetcsv()</code>).
+  See <a href="#write">write()</a>.
+</li>
+</ul>
+
+See <a href="#MyCSV">MyCSV()</a>, <a href="#dump">dump()</a>, <a href="#limit">limit()</a> or <a href="#join">join()</a> for
+some examples.<br>
+<br>
+Don't hesitate to report bugs or feature requests.</div>
+
+<p><b>Variable Summary</b><br>
+<a href="#data">data</a> -- Two dimensional associative array containing all the table row data.<br>
+<a href="#delimiter">delimiter</a> -- Field delimiter.<br>
+<a href="#fields">fields</a> -- Array containing all the table field names.<br>
+<p><b>Constructor Summary</b><br>
+<a href="#MyCSV">MyCSV</a> -- Reads a CSV file and returns it as a MyCSV object.<br>
+<p><b>Method Summary</b><br>
+<a href="#add_field">add_field</a> -- Adds a new field (column) to the table.<br>
+<a href="#count">count</a> -- Gets the number of rows in the table.<br>
+<a href="#data">data</a> -- Gets a table row including their ID number.<br>
+<a href="#data_seek">data_seek</a> -- Moves the internal row pointer to the specified row number.<br>
+<a href="#delete">delete</a> -- Deletes a table row specified by the id.<br>
+<a href="#drop_field">drop_field</a> -- Deletes a field/column from the table.<br>
+<a href="#drop_table">drop_table</a> -- Clears the table.<br>
+<a href="#dump">dump</a> -- Dumps the table to screen.<br>
+<a href="#each">each</a> -- Gets the current data row and increases the internal pointer.<br>
+<a href="#end">end</a> -- Sets the internal pointer to the last data row.<br>
+<a href="#exists">exists</a> -- Checks if the CSV file for this table already exists.<br>
+<a href="#export">export</a> -- Returns a complete CSV dump of the table.<br>
+<a href="#fetch_assoc">fetch_assoc</a> -- Gets the current data row and increase the internal pointer.<br>
+<a href="#first">first</a> -- Gets the first ID number from the table.<br>
+<a href="#id_exists">id_exists</a> -- Checks if the data row specified by the ID exists.<br>
+<a href="#ids">ids</a> -- Gets an array containing all the IDs of the table.<br>
+<a href="#insert">insert</a> -- Inserts a new table row using the next free auto incremented ID number.<br>
+<a href="#insert_id">insert_id</a> -- Gets the ID generated from the previous insert() call.<br>
+<a href="#is_writeable">is_writeable</a> -- Checks if the CSV file for this table is writeable.<br>
+<a href="#join">join</a> -- Performs a left outer join with another table.<br>
+<a href="#krsort">krsort</a> -- Sorts the table rows by ID in reverse order.<br>
+<a href="#ksort">ksort</a> -- Sorts the table rows by ID.<br>
+<a href="#last">last</a> -- Gets the last ID number used in the table.<br>
+<a href="#limit">limit</a> -- Limits the number of rows to be fetched.<br>
+<a href="#max">max</a> -- Gets the biggest ID number used in the table.<br>
+<a href="#min">min</a> -- Gets the smallest ID number used in the table.<br>
+<a href="#next">next</a> -- Gets the next ID number.<br>
+<a href="#num_rows">num_rows</a> -- Gets the number of rows in the table.<br>
+<a href="#prev">prev</a> -- Gets the previous ID number.<br>
+<a href="#rand">rand</a> -- Picks one or more random ID numbers out of the table.<br>
+<a href="#reset">reset</a> -- Sets the internal pointer to the first data row.<br>
+<a href="#row_exists">row_exists</a> -- Looks if a data row is already in the table.<br>
+<a href="#seek">seek</a> -- Sets the internal pointer to the data row specified by an ID or offset.<br>
+<a href="#sort">sort</a> -- Orders the table rows by one or more columns.<br>
+<a href="#tablename">tablename</a> -- Gets the table name without the default .csv file extension.<br>
+<a href="#update">update</a> -- Updates a table row with some new field/value pairs.<br>
+<a href="#write">write</a> -- Rewrites the CSV table file or creates a new one.<br>
+<h2>Variable Detail</h2>
+
+<h3 id="data">data</h3>
+<p>Two dimensional associative array containing all the table row data.</p>
+<p><em>array</em> $<strong>data</strong></p>
+<div class="description">
+<p>See also <a href="#data">data()</a>, <a href="#each">each()</a>.</p></div>
+
+<h3 id="delimiter">delimiter</h3>
+<p>Field delimiter.</p>
+<p><em>string</em> $<strong>delimiter</strong></p>
+<div class="description"><p>The field delimiter for separating values in the CSV file. Default is ","
+(default CSV style). If not, the class tries to use ";" (European/German
+CSV style), "\t" (tabulator separated values), "\0", "|", "&amp;" (URI
+encoded/parameter style), ":" (Unix /etc/passwd style) and " " (log file
+style). Normaly you don't have to touch this variable. Simply choose your
+delimiter when creating your initial CSV file.</p></div>
+
+<h3 id="fields">fields</h3>
+<p>Array containing all the table field names.</p>
+<p><em>array</em> $<strong>fields</strong></p>
+<div class="description"><p>First have to be "id".</p>
+<p>See also <a href="#add_field">add_field()</a>, <a href="#insert">insert()</a>.</p></div>
+
+<h2>Constructor Detail</h2>
+
+<h3 id="MyCSV">MyCSV</h3>
+<p>Reads a CSV file and returns it as a MyCSV object.</p>
+<p><em>MyCSV</em> <strong>MyCSV</strong> ( [ <em>string</em> tablename [, <em>int</em> length]])</p>
+<div class="description"><p>Reads a table into a new MyCSV object. The file name may be entered with
+or without the <code>.csv</code> file extension. If the file does not
+exist it will be created when calling <a href="#write">write()</a>. Set <i>length</i>
+to the maximum number of bytes per row you expect (as you did in
+fgetcsv()). Default is 10000 bytes per line. Setting this to 1000 may
+speed up the method if you'r sure there is no longer line.<br>
+<br>
+For example, create a file called <code>table.csv</code> with the
+following content and call the script below.
+
+<pre>id,value
+3,Example
+4,Another value
+7,Blue</pre>
+
+<pre>&lt;?php
+require_once("MyCSV.class.php");
+$table = new MyCSV("table");
+while ($row = $table->each()) {
+    echo $row['id'] . " is " . $row['value'] . "&lt;br>";
+}
+?></pre></p></div>
+
+<h2>Method Detail</h2>
+
+<h3 id="add_field">add_field</h3>
+<p>Adds a new field (column) to the table.</p>
+<p><em>bool</em> <strong>add_field</strong> ( <em>string</em> field [, <em>string</em> afterField])</p>
+<div class="description"><p>Returns false on failure, e.g.
+if the field already exists.</p>
+<p>See also <a href="#insert">insert()</a>, <a href="#drop_field">drop_field()</a>.</p></div>
+
+<h3 id="count">count</h3>
+<p>Gets the number of rows in the table.</p>
+<p><em>int</em> <strong>count</strong> ( <em>void</em>)</p>
+<div class="description"><p>This is an alias for
+<a href="#num_rows">num_rows()</a>.</p></div>
+
+<h3 id="data">data</h3>
+<p>Gets a table row including their ID number.</p>
+<p><em>array</em> <strong>data</strong> ( <em>mixed</em> id)</p>
+<div class="description"><p>Returns false if the row does
+not exist.</p></div>
+
+<h3 id="data_seek">data_seek</h3>
+<p>Moves the internal row pointer to the specified row number.</p>
+<p><em>bool</em> <strong>data_seek</strong> ( <em>int</em> row_number)</p>
+<div class="description"><p>This is an
+alias for <code><a href="#seek">seek</a>(<i>row_number</i>, SEEK_SET)</code>.</p></div>
+
+<h3 id="delete">delete</h3>
+<p>Deletes a table row specified by the id.</p>
+<p><em>void</em> <strong>delete</strong> ( [ <em>mixed</em> id])</p>
+<div class="description"><p>Deletes a table row specified by the <i>id</i>. Deletes all rows if no
+<i>id</i> is given.</p></div>
+
+<h3 id="drop_field">drop_field</h3>
+<p>Deletes a field/column from the table.</p>
+<p><em>bool</em> <strong>drop_field</strong> ( <em>string</em> field)</p>
+<div class="description"><p>Returns false on failure, e.g. if <i>field</i> does not exists. Rewinds
+the internal array pointer to the first element on success.</p></div>
+
+<h3 id="drop_table">drop_table</h3>
+<p>Clears the table.</p>
+<p><em>void</em> <strong>drop_table</strong> ( <em>void</em>)</p>
+<div class="description"><p>Remove all columns and all fields too.</p></div>
+
+<h3 id="dump">dump</h3>
+<p>Dumps the table to screen.</p>
+<p><em>void</em> <strong>dump</strong> ( <em>void</em>)</p>
+<div class="description"><p>Example:
+
+<pre>&lt;?php
+require_once("MyCSV.class.php");
+$table = new MyCSV("people");
+$table->insert(array('name' => "Adam", 'age'  => 23));
+$table->insert(array('name' => "Bill", 'age'  => 19));
+echo "&lt;pre>";
+$table->dump();
+?></pre></p>
+<p>See also <a href="#export">export()</a>.</p></div>
+
+<h3 id="each">each</h3>
+<p>Gets the current data row and increases the internal pointer.</p>
+<p><em>array</em> <strong>each</strong> ( <em>void</em>)</p>
+<div class="description"><p>See
+<a href="#MyCSV">MyCSV()</a> for an example.</p></div>
+
+<h3 id="end">end</h3>
+<p>Sets the internal pointer to the last data row.</p>
+<p><em>array</em> <strong>end</strong> ( <em>void</em>)</p>
+<div class="description"><p>Returns the last data
+row.</p>
+<p>See also <a href="#reset">reset()</a>, <a href="#last">last()</a>.</p></div>
+
+<h3 id="exists">exists</h3>
+<p>Checks if the CSV file for this table already exists.</p>
+<p><em>bool</em> <strong>exists</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="export">export</h3>
+<p>Returns a complete CSV dump of the table.</p>
+<p><em>string</em> <strong>export</strong> ( <em>void</em>)</p>
+<div class="description">
+<p>See also <a href="#write">write()</a>, <a href="#dump">dump()</a>.</p></div>
+
+<h3 id="fetch_assoc">fetch_assoc</h3>
+<p>Gets the current data row and increase the internal pointer.</p>
+<p><em>array</em> <strong>fetch_assoc</strong> ( <em>void</em>)</p>
+<div class="description"><p>This is an
+alias for <a href="#each">each()</a>.</p></div>
+
+<h3 id="first">first</h3>
+<p>Gets the first ID number from the table.</p>
+<p><em>int</em> <strong>first</strong> ( <em>void</em>)</p>
+<div class="description"><p>This depends on how's the table
+sorted and isn't identical to <a href="#min">min()</a> in all cases.</p>
+<p>See also <a href="#last">last()</a>, <a href="#prev">prev()</a>, <a href="#reset">reset()</a>.</p></div>
+
+<h3 id="id_exists">id_exists</h3>
+<p>Checks if the data row specified by the ID exists.</p>
+<p><em>bool</em> <strong>id_exists</strong> ( <em>mixed</em> id)</p>
+<div class="description">
+<p>See also <a href="#row_exists">row_exists()</a>.</p></div>
+
+<h3 id="ids">ids</h3>
+<p>Gets an array containing all the IDs of the table.</p>
+<p><em>array</em> <strong>ids</strong> ( <em>void</em>)</p>
+<div class="description">
+<p>See also <a href="#min">min()</a>, <a href="#max">max()</a>, <a href="#first">first()</a>, <a href="#last">last()</a>, <a href="#prev">prev()</a>, <a href="#next">next()</a>, <a href="#rand">rand()</a>.</p></div>
+
+<h3 id="insert">insert</h3>
+<p>Inserts a new table row using the next free auto incremented ID number.</p>
+<p><em>void</em> <strong>insert</strong> ( <em>array</em> data)</p>
+<div class="description"></div>
+
+<h3 id="insert_id">insert_id</h3>
+<p>Gets the ID generated from the previous insert() call.</p>
+<p><em>int</em> <strong>insert_id</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="is_writeable">is_writeable</h3>
+<p>Checks if the CSV file for this table is writeable.</p>
+<p><em>bool</em> <strong>is_writeable</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="join">join</h3>
+<p>Performs a left outer join with another table.</p>
+<p><em>void</em> <strong>join</strong> ( <em>array</em> rightTable, <em>string</em> foreignKey)</p>
+<div class="description"><p>The tables are merged using a foreign key of the left table and the
+primary key of the right table. This adds temporary columns to the left
+table (temporary means, they aren't stored using <a href="#write">write()</a>). A
+slightly complex example:
+
+<pre>echo "&lt;pre>";
+$rightTable = new MyCSV();
+$rightTable->insert(array('id' => 7, 'color' => "red"));
+$rightTable->insert(array('id' => 8, 'color' => "yellow"));
+$rightTable->dump();
+echo "\n";
+$leftTable = new MyCSV();
+$leftTable->insert(array('thing' => "Table", 'color_id' => 7));
+$leftTable->insert(array('thing' => "Chair", 'color_id' => 8));
+$leftTable->insert(array('thing' => "Lamp", 'color_id' => 7));
+$leftTable->dump();
+echo "\n";
+$leftTable->join($rightTable, "color_id");
+while ($row = $leftTable->each()) {
+    echo $row['thing'] . " is " . $row['color'] . "\n";
+}</pre></p></div>
+
+<h3 id="krsort">krsort</h3>
+<p>Sorts the table rows by ID in reverse order.</p>
+<p><em>void</em> <strong>krsort</strong> ( [ <em>int</em> sort_flags])</p>
+<div class="description"><p>This is identical to
+<code><a href="#sort">sort</a>("id DESC")</code> but a bit faster.</p></div>
+
+<h3 id="ksort">ksort</h3>
+<p>Sorts the table rows by ID.</p>
+<p><em>void</em> <strong>ksort</strong> ( [ <em>int</em> sort_flags])</p>
+<div class="description"><p>This is identical to
+<code><a href="#sort">sort</a>("id")</code> but a bit faster.</p></div>
+
+<h3 id="last">last</h3>
+<p>Gets the last ID number used in the table.</p>
+<p><em>int</em> <strong>last</strong> ( <em>void</em>)</p>
+<div class="description"><p>This depends on how's the
+table sorted and isn't identical to <a href="#max">max()</a> in all cases.</p>
+<p>See also <a href="#first">first()</a>, <a href="#next">next()</a>, <a href="#end">end()</a>.</p></div>
+
+<h3 id="limit">limit</h3>
+<p>Limits the number of rows to be fetched.</p>
+<p><em>bool</em> <strong>limit</strong> ( [ <em>int</em> rows [, <em>mixed</em> id [, <em>int</em> whence]]])</p>
+<div class="description"><p>Use <code>limit(2)</code> to fetch the first two rows only when calling
+<a href="#each">each()</a> (or <a href="#fetch_assoc">fetch_assoc()</a>). Use <code>limit(2, $id)</code>
+to fetch the next two rows, where <code>$id</code> is calculated using
+<code><a href="#first">first()</a></code> for the first page and using <code><a href="#next">next</a>($id, 2)</code>, <code>next($id, 4)</code> and so on for all other
+pages. Example:
+
+<pre>$table = new MyCSV("table");
+for ($i = 10; $i &lt; 21; $i++) {
+  $table->insert(array('text' => "Text $i"));
+}
+// Order the table first because limit() depends on this.
+$table->sort("text DESC");
+// Limit to 5 rows starting from a specific id.
+$rows = 5;
+$id = isset($_REQUEST['id']) ? $_REQUEST['id'] : $table->first();
+$table->limit($rows, $id);
+while ($row = $table->each()) {
+  echo "ID $row[id]: $row[text]&lt;br>";
+}
+// Calculate and display the link targets for paging.
+$first = $table->first();
+$prev  = $table->prev($id, $rows);
+$next  = $table->next($id, $rows);
+$last  = $table->prev($table->last(), ($table->count() - 1) % $rows);
+if (strcmp($first, $id)) echo "&lt;a href=\"$PHP_SELF?id=$first\">First&lt;/a> ";
+if ($prev)               echo "&lt;a href=\"$PHP_SELF?id=$prev\">Prev&lt;/a> ";
+if ($next)               echo "&lt;a href=\"$PHP_SELF?id=$next\">Next&lt;/a> ";
+if (strcmp($last, $id))  echo "&lt;a href=\"$PHP_SELF?id=$last\">Last&lt;/a>";</pre>
+
+Call <code>limit()</code> (or <code>limit(0)</code> or something like
+that) to reset the limitation.<br>
+<br>
+<i>Warning! The limitation has no effect on <a href="#delete">delete()</a>,
+<a href="#update">update()</a> and so on! All following method calls like <a href="#sort">sort()</a>
+or <a href="#join">join()</a> that <a href="#seek">sets</a> or <a href="#reset">resets</a> the
+internal pointer will change the starting ID (but not the number of rows)
+set by limit().</i></p>
+<p>See also <a href="#seek">seek()</a>.</p></div>
+
+<h3 id="max">max</h3>
+<p>Gets the biggest ID number used in the table.</p>
+<p><em>int</em> <strong>max</strong> ( <em>void</em>)</p>
+<div class="description"><p>This is often the same as
+<a href="#insert_id">insert_id()</a> which returns the last inserted ID. But unlike that,
+max() doesn't depend on a previous call of <a href="#insert">insert()</a>.</p></div>
+
+<h3 id="min">min</h3>
+<p>Gets the smallest ID number used in the table.</p>
+<p><em>int</em> <strong>min</strong> ( <em>void</em>)</p>
+<div class="description"><p>Typically, this is 1.</p></div>
+
+<h3 id="next">next</h3>
+<p>Gets the next ID number.</p>
+<p><em>int</em> <strong>next</strong> ( <em>mixed</em> id [, <em>int</em> offset])</p>
+<div class="description"><p>Use <i>offset</i> to get another ID near to the
+row specified by <i>id</i>. Default is 1 (one forward). Returns false if
+there is no row at this position.</p>
+<p>See also <a href="#prev">prev()</a>, <a href="#last">last()</a>.</p></div>
+
+<h3 id="num_rows">num_rows</h3>
+<p>Gets the number of rows in the table.</p>
+<p><em>int</em> <strong>num_rows</strong> ( <em>void</em>)</p>
+<div class="description">
+<p>See also <a href="#count">count()</a>.</p></div>
+
+<h3 id="prev">prev</h3>
+<p>Gets the previous ID number.</p>
+<p><em>int</em> <strong>prev</strong> ( <em>mixed</em> id [, <em>int</em> offset])</p>
+<div class="description"><p>Use <i>offset</i> to get another ID near to
+the row specified by <i>id</i>. Default is 1 (one backward). Returns
+false if there is no row at this position.</p>
+<p>See also <a href="#next">next()</a>, <a href="#first">first()</a>.</p></div>
+
+<h3 id="rand">rand</h3>
+<p>Picks one or more random ID numbers out of the table.</p>
+<p><em>int</em> <strong>rand</strong> ( [ <em>int</em> num_req])</p>
+<div class="description">
+<p>See also <a href="#ids">ids()</a>.</p></div>
+
+<h3 id="reset">reset</h3>
+<p>Sets the internal pointer to the first data row.</p>
+<p><em>array</em> <strong>reset</strong> ( <em>void</em>)</p>
+<div class="description"><p>Returns the first data
+row.</p>
+<p>See also <a href="#end">end()</a>, <a href="#each">each()</a>, <a href="#first">first()</a>.</p></div>
+
+<h3 id="row_exists">row_exists</h3>
+<p>Looks if a data row is already in the table.</p>
+<p><em>bool</em> <strong>row_exists</strong> ( <em>array</em> search)</p>
+<div class="description">
+<p>See also <a href="#id_exists">id_exists()</a>.</p></div>
+
+<h3 id="seek">seek</h3>
+<p>Sets the internal pointer to the data row specified by an ID or offset.</p>
+<p><em>bool</em> <strong>seek</strong> ( [ <em>mixed</em> id [, <em>int</em> whence]])</p>
+<div class="description"><p>If <i>whence</i> is left out, seek jumps to a specific ID (default).<br>
+<br>
+<i>whence</i> may be SEEK_SET to set an absolute position counted from
+the start of the table, SEEK_CUR for a relative position or SEEK_END for
+an absolute position counted from the end of the table. The behaviour of
+these options is identical to fseek(). Keep in mind that <i>id</i>
+represents an offset instead of a row ID in these cases. Example:
+
+<pre>$table = new MyCSV("table");
+$table->insert(array('id' => 3)); // 1st row
+$table->insert(array('id' => 7)); // 2nd row
+$table->seek(1, SEEK_SET); // Jump to 2nd row
+$row = $table->fetch_assoc();
+echo $row['id']; // Output: 7
+$table->seek(7); // Jump to 2nd row</pre></p>
+<p>See also <a href="#limit">limit()</a>.</p></div>
+
+<h3 id="sort">sort</h3>
+<p>Orders the table rows by one or more columns.</p>
+<p><em>void</em> <strong>sort</strong> ( <em>mixed</em> sort_flags)</p>
+<div class="description"><p>Sorting order flags:
+<ul>
+<li>ASC or SORT_ASC - Sort in ascending order (default).
+</li>
+<li>DESC or SORT_DESC - Sort in descending order.
+</li>
+</ul>
+
+Sorting type flags:
+<ul>
+<li>SORT_REGULAR - Compare items normally (default).
+</li>
+<li>SORT_NUMERIC - Compare items numerically.
+</li>
+<li>SORT_STRING - Compare items as strings.
+</li>
+<li>SORT_LOCALE_STRING - Compare items as strings, based on the current
+  locale. Don't forget to use setlocale() before.
+</li>
+<li>SORT_NAT - Compare items using a "natural order" algorithm.
+</li>
+<li>SORT_TIME - Compare items as date and time values. This uses
+  strtotime() to convert the strings from the CSV file (everything in a
+  CSV file is a string) into timestamps and compares the timestamps.
+</li>
+</ul>
+
+Special condition flag: SORT_NULL - Move empty elements to the end.<br>
+<br>
+No two sorting flags of the same type can be specified after each field.
+Some examples:
+
+<pre>setlocale(LC_ALL, "de_DE@euro", "de_DE", "deu_deu");
+$table->sort("a, b DESC");
+$table->sort("a b DESC"); // Same as above
+$table->sort("a", "b", SORT_DESC); // Same as above
+$table->sort("a SORT_LOCALE_STRING SORT_NULL b SORT_NULL");
+$table->sort("a SORT_NAT, b SORT_NAT, c");</pre></p></div>
+
+<h3 id="tablename">tablename</h3>
+<p>Gets the table name without the default .csv file extension.</p>
+<p><em>string</em> <strong>tablename</strong> ( <em>void</em>)</p>
+<div class="description"><p>The path returned can be used in <a href="#MyCSV">MyCSV()</a> without any change.
+Directories are not removed from the string, if present.</p></div>
+
+<h3 id="update">update</h3>
+<p>Updates a table row with some new field/value pairs.</p>
+<p><em>bool</em> <strong>update</strong> ( <em>array</em> data [, <em>mixed</em> id])</p>
+<div class="description"><p>Examples:
+
+<pre>$table->update(array(...), 3);
+$table->update(array('id' => 3, ...));
+$table->update(array('id' => 7, ...), 3); // Moves ID 3 to ID 7</pre></p></div>
+
+<h3 id="write">write</h3>
+<p>Rewrites the CSV table file or creates a new one.</p>
+<p><em>bool</em> <strong>write</strong> ( [ <em>string</em> tablename [, <em>string</em> delimiter]])</p>
+<div class="description"><p>write() closes the file when done.<br>
+<br>
+The files created are binary-safe and compatible with any external spread
+sheet software (e.g. Excel) with a few exceptions:
+<ul>
+<li>NUL bytes (#0) are replaced with a backslash followed by a DEL
+  character (#127). That's because older PHP versions aren't able to
+  process CSV files containing NUL bytes.
+</li>
+<li>Double quotes at the beginning and end of a value are replaced with a
+  backslash followed by a left double quote (#147). That's because newer
+  (!) PHP versions strip such quotes.
+</li>
+<li>Backslashes in front of a NUL, DEL, double quote, left double quote,
+  other backslash or end of string are replaced with two backslashes.
+</li>
+</ul>
+That's what I call "smart backslashes". You don't need to know about this
+if you'r not using external software to modify your CSV files. Due to the
+replacements described above, the class <b>is</b> able to process any
+binary data. <a href="#MyCSV">MyCSV()</a> knows about these rules and undo the
+replacements immediatelly.<br>
+<br>
+Binary safety tested with the following PHP versions: 4.3.1, 4.3.3,
+4.3.5, 4.3.9, 4.3.10, 4.4.0, 5.0.4.</p></div>
+
+<address>Documentation generated by
+<a href="http://maettig.com/">TM::PHPDoc</a></address>
+
+</body>
+</html>

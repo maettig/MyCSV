@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Class TM::MyCSVAdmin</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<meta name="generator" content="TM::MyCSV">
+<style type="text/css">
+body{background-color:white;}
+a{color:#006600;}
+h1 small{font-size:x-small;}
+h1 small a{color:black;}
+h2{background-color:#D2ECD2;padding:4px;}
+h3{background-color:#F4FAF4;padding:1px;border-top:2px solid #D2ECD2;}
+.intro,.description{max-width:75ex;}
+.description{margin-left:40px;}
+address{font-size:smaller;margin-top:30px;}
+address,address a{color:#666666;}
+</style>
+</head>
+<body>
+
+<h1>Class TM::MyCSVAdmin <small>by <a href="http://maettig.com/">Thiemo Mättig</a></small><br>
+<small>Version 2003-11-11</small></h1>
+
+<p class="intro">Universal administration tool and demo application for the TM::MyCSV class.<br>
+<br>
+Don't hesitate to
+<a href="http://bugs.maettig.com/">report bugs or feature requests</a>.</p>
+
+<p><b>Variable Summary</b><br>
+<a href="#SELF">SELF</a> -- Represents the $_SERVER['PHP_SELF'] value.<br>
+<a href="#dir">dir</a> -- Relative path where the .csv and .txt files are stored.<br>
+<a href="#priv">priv</a> -- Privileges to grand or deny access to specific functions.<br>
+<a href="#table">table</a> -- MyCSV object currently edited by TM::MyCSVAdmin.<br>
+<a href="#types">types</a> -- Contains the suggested field types for the table.<br>
+<p><b>Constructor Summary</b><br>
+<a href="#MyCSVAdmin">MyCSVAdmin</a> -- Initializes the class.<br>
+<p><b>Method Summary</b><br>
+<a href="#GET">GET</a> -- Gets a GET or POST value.<br>
+<a href="#browse">browse</a> -- Shows the contents of a table.<br>
+<a href="#change">change</a> -- Shows a form to insert or update a row.<br>
+<a href="#delete">delete</a> -- Confirms the deletion of a row.<br>
+<a href="#delete_all">delete_all</a> -- Confirms the deletion of all rows.<br>
+<a href="#download">download</a> -- Download binary file specified by tablename, id and field.<br>
+<a href="#drop">drop</a> -- Confirms the deletion of a column.<br>
+<a href="#drop_table">drop_table</a> -- Confirms the deletion of a table.<br>
+<a href="#export">export</a> -- Shows a form to export the table.<br>
+<a href="#htmlQuote">htmlQuote</a> -- Makes a string well readable to the browser.<br>
+<a href="#structure">structure</a> -- Shows the structure of a table.<br>
+<a href="#tables">tables</a> -- Shows a list of all tables.<br>
+<h2>Variable Detail</h2>
+
+<h3 id="SELF">SELF</h3>
+<p>Represents the $_SERVER['PHP_SELF'] value.</p>
+<p><em>string</em> $<strong>SELF</strong></p>
+<div class="description"></div>
+
+<h3 id="dir">dir</h3>
+<p>Relative path where the .csv and .txt files are stored.</p>
+<p><em>string</em> $<strong>dir</strong></p>
+<div class="description"></div>
+
+<h3 id="priv">priv</h3>
+<p>Privileges to grand or deny access to specific functions.</p>
+<p><em>int</em> $<strong>priv</strong></p>
+<div class="description"><p>Add the values in the following table to grand or deny access to specific
+functions of the administrative interface. Default is -1, everything
+enabled.
+
+<ul>
+<li>2 - Insert rows
+</li>
+<li>4 - Update rows
+</li>
+<li>8 - Delete rows
+</li>
+<li>32 - Alter tables
+</li>
+<li>64 - Create tables
+</li>
+<li>128 - Drop tables
+</li>
+<li>8192 - Export tables</pre>
+</li>
+</ul>
+
+Privilege 1 (select rows), 16 (create/alter/drop indices) and 256 to 4096
+(server administration) aren't used.</p></div>
+
+<h3 id="table">table</h3>
+<p>MyCSV object currently edited by TM::MyCSVAdmin.</p>
+<p><em>MyCSV</em> $<strong>table</strong></p>
+<div class="description"></div>
+
+<h3 id="types">types</h3>
+<p>Contains the suggested field types for the table.</p>
+<p><em>string</em> $<strong>types</strong></p>
+<div class="description"></div>
+
+<h2>Constructor Detail</h2>
+
+<h3 id="MyCSVAdmin">MyCSVAdmin</h3>
+<p>Initializes the class.</p>
+<p><em>MyCSVAdmin</em> <strong>MyCSVAdmin</strong> ( <em>void</em>)</p>
+<div class="description"><p>Loads the table specified by $_GET['table'] or
+$_POST['table']. Returns a new MyCSVAdmin object.</p></div>
+
+<h2>Method Detail</h2>
+
+<h3 id="GET">GET</h3>
+<p>Gets a GET or POST value.</p>
+<p><em>string</em> <strong>GET</strong> ( <em>string</em> key)</p>
+<div class="description"><p>This unifies the different behaviours of $_GET,
+$HTTP_GET_VARS, $GLOBALS (register_globals) and so on.<dl><dt>Parameters:</dt><dd><em>key</em> - Name of the request variable to be returned.</dd></dl></p></div>
+
+<h3 id="browse">browse</h3>
+<p>Shows the contents of a table.</p>
+<p><em>void</em> <strong>browse</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="change">change</h3>
+<p>Shows a form to insert or update a row.</p>
+<p><em>void</em> <strong>change</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="delete">delete</h3>
+<p>Confirms the deletion of a row.</p>
+<p><em>void</em> <strong>delete</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="delete_all">delete_all</h3>
+<p>Confirms the deletion of all rows.</p>
+<p><em>void</em> <strong>delete_all</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="download">download</h3>
+<p>Download binary file specified by tablename, id and field.</p>
+<p><em>void</em> <strong>download</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="drop">drop</h3>
+<p>Confirms the deletion of a column.</p>
+<p><em>void</em> <strong>drop</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="drop_table">drop_table</h3>
+<p>Confirms the deletion of a table.</p>
+<p><em>void</em> <strong>drop_table</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="export">export</h3>
+<p>Shows a form to export the table.</p>
+<p><em>void</em> <strong>export</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="htmlQuote">htmlQuote</h3>
+<p>Makes a string well readable to the browser.</p>
+<p><em>string</em> <strong>htmlQuote</strong> ( <em>string</em> text)</p>
+<div class="description"><p>It strips any critical
+characters, truncates the string and replaces HTML entities.<dl><dt>Parameters:</dt><dd><em>text</em> - Text to be HTMLed.</dd></dl></p></div>
+
+<h3 id="structure">structure</h3>
+<p>Shows the structure of a table.</p>
+<p><em>void</em> <strong>structure</strong> ( <em>void</em>)</p>
+<div class="description"></div>
+
+<h3 id="tables">tables</h3>
+<p>Shows a list of all tables.</p>
+<p><em>void</em> <strong>tables</strong> ( <em>void</em>)</p>
+<div class="description"><p>Use <a href="#dir">dir</a> to specify the working
+directory.</p></div>
+
+<address>Documentation generated by
+<a href="http://maettig.com/">TM::PHPDoc</a></address>
+
+</body>
+</html>

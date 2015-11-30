@@ -1,0 +1,71 @@
+TM::MyCSVAdmin Change Log
+
+2007-07-15
+    * Action handler "_onRowUpdated" added.
+
+2005-12-18
+    * Added function "permanently order table by" a single column.
+    * Action handler "_onRowDelete" added.
+    * "_onDisplay" wasn't possible for foreign key fields. Fixed.
+    * Support for external stylesheet file "MyCSVAdmin.css" added.
+
+2005-09-24
+    * Added action handlers (simple plugin interface) _onRowLoaded, _onDisplay
+      and _onRowValidated.
+    * Basic MIME type detection when downloading binary data.
+    * Improved the CSS a little bit. Added some missing htmlspecialchars().
+
+2005-04-11
+    * Large tables can be browsed page by page.
+    * Calculation of average row size excludes head line.
+    * Some titles (acronyms) added.
+    * Boolean value "false" is displayed as an empty field instead of "-".
+
+2005-04-09
+    * $dir can be both a string or an array.
+    * New tables are created in the first directory specified in $dir.
+
+2005-03-19
+    * Basic support for different charsets added (UTF-8 recomended).
+    * Parameter $dir added to the constructor.
+    * Added a lot more delimiters to the export form.
+    * Reads also files with extensions .tsv, .dsv and so on.
+    * CSS updated.
+
+2004-01-01
+    * Excluded any robot by adding <meta name="robots" ...>.
+
+2003-11-11
+    * "Go to parent Site" link added.
+    * Added "Override" to the "Foreign Keys".
+
+2003-11-10
+    * Basic foreign key support added. DOUBLE CHECK THIS AGAIN!
+    * Basic .htaccess/.htpasswd added.
+    * magic_quotes behavior changed, using Apeform(0, 0, false) now.
+    * Guessed types aren't displayed when override was clicked.
+
+2003-11-05
+    * Added onmouseover/hover effects. Droping/deleting links become red.
+    * Form width is 60 instead of 40 now.
+    * Menu is "Browse, Insert, Structure, ..." now.
+    * Added "varchar" => override => "text".
+
+2003-10-30
+    * Now, the form element for bool is checkbox instead of select.
+    * Type detection improved, fields containing "\n" become "text" now.
+    * Displays "Last Update" date in the structure view.
+
+2003-10-29
+    * Fixed tiny bug when using "override".
+
+2003-10-28
+    * Changed MIME type "text/plain" to "tab-separated-values".
+    * Changed "Content-Disposition: inline" to "attachment".
+    * Bugfix: Added missing table->reset() in browse().
+
+3003-10-27
+    * Added priv to grand or deny access to specific functions of the class.
+    * Type detection is more thoughtful (e.g., id doesn't become bool).
+    * It's possible to override the type detection for bool and blob fields.
+    * Added dir to be able to store the tables in a different directory.

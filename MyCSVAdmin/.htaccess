@@ -1,0 +1,14 @@
+AuthType Basic
+AuthName "MyCSVAdmin"
+
+#
+# Should be a absolute path or a path relative to ServerRoot. Contains username
+# "admin" and password "admin" by default.
+#
+AuthUserFile "htdocs/MyCSVAdmin/.htpasswd"
+
+#
+# Any valid user listed in AuthUserFile is allowed. Uncomment these line and
+# edit the .htpasswd file to enable the password protection.
+#
+#Require valid-user
